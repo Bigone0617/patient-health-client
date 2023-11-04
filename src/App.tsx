@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import patientApi from "./api/patient/patientApi";
 import { Gender, IPatientModel } from "./models/patient.d";
+import HeaderLayout from "./layout/HeaderLayout";
+import ListLayout from "./layout/ListLayout";
 
 function App() {
   const [patietnList, setPatientList] = useState<IPatientModel[]>([]);
@@ -46,7 +48,9 @@ function App() {
 
   return (
     <div className="App">
-      {patietnList.map((data) => (
+      <HeaderLayout />
+      <ListLayout />
+      {/* {patietnList.map((data) => (
         <div key={data._id}>
           <div onClick={() => onClickHandler(data._id)}>
             {data.name}-{data.painAreas}
@@ -55,7 +59,7 @@ function App() {
           <div onClick={() => onUpdateClickHandler(data)}>updateData</div>
           <div onClick={() => onCreateClickHandler()}>환자 생성</div>
         </div>
-      ))}
+      ))} */}
     </div>
   );
 }
