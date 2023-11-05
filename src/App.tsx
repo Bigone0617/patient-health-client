@@ -7,12 +7,6 @@ import ListLayout from "./layout/ListLayout";
 
 function App() {
   const [patietnList, setPatientList] = useState<IPatientModel[]>([]);
-  useEffect(() => {
-    (async () => {
-      const { response } = await patientApi.getAllPatient();
-      setPatientList(response?.data as IPatientModel[]);
-    })();
-  }, []);
 
   const onClickHandler = async (id: string) => {
     const { response } = await patientApi.getPatientById(id);
