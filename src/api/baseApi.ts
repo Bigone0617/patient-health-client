@@ -5,7 +5,6 @@ import isNil from "lodash/isNil";
 class BaseApoi<T> {
   resource: string;
   axiosInstance: AxiosInstance;
-  accessToken?: string;
 
   constructor(resource: string) {
     this.resource = resource;

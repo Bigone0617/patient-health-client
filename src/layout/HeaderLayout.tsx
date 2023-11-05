@@ -13,6 +13,9 @@ const HeaderLayout: React.FC<{}> = () => {
 const Header = styled.div`
   width: 100%;
   height: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default HeaderLayout;

@@ -1,5 +1,5 @@
 import { AxiosError, AxiosResponse } from "axios";
-import { IPatientModel } from "../../models/patient";
+import { IPatientModel, ISearchPatientReq } from "../../models/patient";
 import BaseApoi from "../baseApi";
 
 class PatientApi extends BaseApoi<IPatientModel> {
@@ -27,7 +27,23 @@ class PatientApi extends BaseApoi<IPatientModel> {
     error: null | AxiosError;
   }> {
     try {
-      const response = await this.axiosInstance.get(`${this.resource}/${id}`);
+      const response = await this.axiosInstance.get(
+        `${this.resource}/id/${id}`
+      );
+      return { response, error: null };
+    } catch (e: any) {
+      return { response: null, error: e };
+    }
+  }
+
+  async getPatientListBySearch(searchReq: ISearchPatientReq): Promise<{
+    response: AxiosResponse<IPatientModel[]> | null;
+    error: AxiosError | null;
+  }> {
+    try {
+      const response = await this.axiosInstance.get(`${this.resource}/search`, {
+        params: searchReq,
+      });
       return { response, error: null };
     } catch (e: any) {
       return { response: null, error: e };
@@ -63,9 +79,7 @@ class PatientApi extends BaseApoi<IPatientModel> {
     }
   }
 
-  async createPatient(
-    newPatient: Partial<IPatientModel>
-  ): Promise<{
+  async createPatient(newPatient: Partial<IPatientModel>): Promise<{
     response: AxiosResponse<IPatientModel> | null;
     error: AxiosError | null;
   }> {
