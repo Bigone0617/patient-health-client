@@ -14,7 +14,9 @@ const ListPatientDetailComponent: React.FC<IPatientModel> = (props) => {
       <ContentsThirtyWrapper>
         {props.underlyingConditions}
       </ContentsThirtyWrapper>
-      <ContentsThirtyWrapper>{props.painAreas}</ContentsThirtyWrapper>
+      <ContentsThirtyWrapper>
+        {props?.painAreas?.join(",")}
+      </ContentsThirtyWrapper>
     </DetailWrapper>
   );
 };

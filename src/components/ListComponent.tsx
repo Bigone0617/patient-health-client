@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import useStore from "../store/store";
 import ListPatientDetailComponent from "./ListPatientDetailComponent";
-import patientApi from "../api/patient/patientApi";
-import { useQuery } from "@tanstack/react-query";
 import ModalComponent from "./ModalComponent";
 
 const ListComponent: React.FC<{}> = () => {
   const store = useStore();
-  const {data, isFetched } = useQuery({queryKey: ['patient'], queryFn:() => patientApi.getAllPatient(), refetchInterval: 10000, refetchOnWindowFocus: true});
-
-  useEffect(() =>{
-    if(isFetched && data){
-      store.setPatients(data)
-    }
-  },[])
 
   return (
     <ListWrapper>
-      {
-        store.showModal.isShow ? (
-          <ModalComponent {...store.showModal.props}/>
-        ) : null
-      }
+      {store.showModal.isShow ? (
+        <ModalComponent {...store.showModal.props} />
+      ) : null}
       <ListHeaderWrapper>
         <HeaderTenWrapper>이름</HeaderTenWrapper>
         <HeaderTenWrapper>성별</HeaderTenWrapper>
@@ -32,8 +21,8 @@ const ListComponent: React.FC<{}> = () => {
       </ListHeaderWrapper>
       <ListContentsWrapper>
         {store.patients?.map((patient) => (
-            <ListPatientDetailComponent key={patient._id} {...patient} />
-          ))}
+          <ListPatientDetailComponent key={patient._id} {...patient} />
+        ))}
       </ListContentsWrapper>
     </ListWrapper>
   );

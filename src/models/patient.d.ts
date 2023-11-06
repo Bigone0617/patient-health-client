@@ -4,7 +4,7 @@ export interface IPatientModel extends IBaseModel {
   name: string;
   gender: Gender;
   birthdate: number;
-  underlyingConditions: string[];
+  underlyingConditions: string;
   painAreas: string[];
   memo: string;
 }
