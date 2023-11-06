@@ -6,8 +6,6 @@ import HeaderLayout from "./layout/HeaderLayout";
 import ListLayout from "./layout/ListLayout";
 
 function App() {
-  const [patietnList, setPatientList] = useState<IPatientModel[]>([]);
-
   const onClickHandler = async (id: string) => {
     const { response } = await patientApi.getPatientById(id);
     console.log(response);
@@ -44,16 +42,6 @@ function App() {
     <div className="App">
       <HeaderLayout />
       <ListLayout />
-      {/* {patietnList.map((data) => (
-        <div key={data._id}>
-          <div onClick={() => onClickHandler(data._id)}>
-            {data.name}-{data.painAreas}
-          </div>
-          <div onClick={() => onDeleteClickHandler(data._id)}>삭제</div>
-          <div onClick={() => onUpdateClickHandler(data)}>updateData</div>
-          <div onClick={() => onCreateClickHandler()}>환자 생성</div>
-        </div>
-      ))} */}
     </div>
   );
 }

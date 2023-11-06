@@ -3,8 +3,10 @@ import styled from "styled-components";
 import { BsSearchHeart } from "react-icons/bs";
 import patientApi from "../api/patient/patientApi";
 import { SearchField } from "../models/patient.d";
+import useStore from "../store/store";
 
 const SearchComponent: React.FC<{}> = () => {
+  const store = useStore();
   const [searchField, setSearchField] = useState<SearchField>(SearchField.NAME);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -25,7 +27,8 @@ const SearchComponent: React.FC<{}> = () => {
       searchField,
     });
 
-    console.log(searchPatientList);
+    store.setPatients(searchPatientList)
+    setSearchTerm('')
   };
 
   return (
@@ -37,6 +40,7 @@ const SearchComponent: React.FC<{}> = () => {
         <SearchInputForm onSubmit={(e) => onSubmitHandler(e)}>
           <SearchInput
             onChange={(e) => onChangeSearchTextHandler(e)}
+            value={searchTerm}
           ></SearchInput>
         </SearchInputForm>
       </IconInputWrapper>

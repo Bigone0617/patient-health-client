@@ -10,15 +10,13 @@ class PatientApi extends BaseApoi<IPatientModel> {
     this.resource = resource;
   }
 
-  async getAllPatient(): Promise<{
-    response: null | AxiosResponse<IPatientModel[]>;
-    error: null | AxiosError;
-  }> {
+  async getAllPatient(): Promise<IPatientModel[]> {
     try {
       const response = await this.axiosInstance.get(this.resource);
-      return { response, error: null };
+
+      return response.data;
     } catch (e: any) {
-      return { response: null, error: e };
+      return e;
     }
   }
 
@@ -36,17 +34,14 @@ class PatientApi extends BaseApoi<IPatientModel> {
     }
   }
 
-  async getPatientListBySearch(searchReq: ISearchPatientReq): Promise<{
-    response: AxiosResponse<IPatientModel[]> | null;
-    error: AxiosError | null;
-  }> {
+  async getPatientListBySearch(searchReq: ISearchPatientReq): Promise<IPatientModel[]> {
     try {
       const response = await this.axiosInstance.get(`${this.resource}/search`, {
         params: searchReq,
       });
-      return { response, error: null };
+      return response.data;
     } catch (e: any) {
-      return { response: null, error: e };
+      return e;
     }
   }
 

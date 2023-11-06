@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import useStore from "../store/store";
-import { IPatientModel } from "../models/patient";
 import ListPatientDetailComponent from "./ListPatientDetailComponent";
 import patientApi from "../api/patient/patientApi";
+import { useQuery } from "@tanstack/react-query";
+import ModalComponent from "./ModalComponent";
 
 const ListComponent: React.FC<{}> = () => {
   const store = useStore();
-  const [patientList, setPatientList] = useState<IPatientModel[]>([]);
+  const {data, isFetched } = useQuery({queryKey: ['patient'], queryFn:() => patientApi.getAllPatient(), refetchInterval: 10000, refetchOnWindowFocus: true});
 
-  useEffect(() => {
-    (async () => {
-      const { response } = await patientApi.getAllPatient();
-      store.setPatients(response?.data as IPatientModel[]);
-    })();
-    setPatientList(store.patients);
-  }, []);
+  useEffect(() =>{
+    if(isFetched && data){
+      store.setPatients(data)
+    }
+  },[])
 
   return (
     <ListWrapper>
+      {
+        store.showModal.isShow ? (
+          <ModalComponent {...store.showModal.props}/>
+        ) : null
+      }
       <ListHeaderWrapper>
         <HeaderTenWrapper>이름</HeaderTenWrapper>
         <HeaderTenWrapper>성별</HeaderTenWrapper>
@@ -27,8 +31,7 @@ const ListComponent: React.FC<{}> = () => {
         <HeaderThirtyWrapper>통증 부위</HeaderThirtyWrapper>
       </ListHeaderWrapper>
       <ListContentsWrapper>
-        {patientList &&
-          patientList.map((patient) => (
+        {store.patients?.map((patient) => (
             <ListPatientDetailComponent key={patient._id} {...patient} />
           ))}
       </ListContentsWrapper>
@@ -41,10 +44,11 @@ const ListWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
 const ListHeaderWrapper = styled.div`
-  width: 100%;
+  width: 90%;
   height: 10%;
   display: flex;
 `;
@@ -78,6 +82,10 @@ const ListContentsWrapper = styled.div`
   height: 90%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  background: lightgray;
+  border-radius: 10px;
+  gap: 10px;
 `;
 
 export default ListComponent;
