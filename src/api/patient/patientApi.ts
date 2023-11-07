@@ -1,6 +1,7 @@
 import { AxiosError, AxiosResponse } from "axios";
 import { IPatientModel, ISearchPatientReq } from "../../models/patient";
 import BaseApoi from "../baseApi";
+import useStore from "../../store/store";
 
 class PatientApi extends BaseApoi<IPatientModel> {
   resource: string;
@@ -13,6 +14,9 @@ class PatientApi extends BaseApoi<IPatientModel> {
   async getAllPatient(): Promise<IPatientModel[]> {
     try {
       const response = await this.axiosInstance.get(this.resource);
+
+      const setPatients = useStore.getState().setPatients;
+      setPatients(response.data);
 
       return response.data;
     } catch (e: any) {

@@ -5,11 +5,12 @@ import useStore from "../store/store";
 import { SlClose } from "react-icons/sl";
 import { painAreasList, underlyingConditionsList } from "../common/constants";
 import patientApi from "../api/patient/patientApi";
+import { numberToString, stringToNumber } from "../util/typeChanger";
 
 const ModalComponent: React.FC<Partial<IPatientModel>> = (props) => {
   const store = useStore();
   const [name, setName] = useState<string>(props.name ?? "");
-  const [birthdate, setBirthdate] = useState<number>(props.birthdate ?? 0);
+  const [birthdate, setBirthdate] = useState<string>(numberToString(props?.birthdate));
   const [gender, setGender] = useState<Gender>(props.gender ?? Gender.M);
   const [underlyingConditions, setUnderlyingConditions] = useState<string>(
     props.underlyingConditions ?? ""
@@ -22,29 +23,48 @@ const ModalComponent: React.FC<Partial<IPatientModel>> = (props) => {
   };
 
   const onClickSaveHandler = async () => {
-    const editPatient: Partial<IPatientModel> = {
+    const newPatient: Partial<IPatientModel> = {
       name,
-      birthdate,
+      birthdate: stringToNumber(birthdate),
       gender,
       underlyingConditions,
       painAreas,
       memo,
     };
 
-    editPatient._id = props._id!!;
+    try{
+      const validate = checkValidation();
 
-    const { response } = await patientApi.updatePatientById(editPatient);
+      if(!validate.validation){
+        alert(validate.message);
+        return;
+      }
 
-    if (response?.status === 200) {
-      const patientList = await patientApi.getAllPatient();
-      store.setPatients(patientList);
+      if(props._id){
+        newPatient._id = props._id!!;
+
+        await patientApi.updatePatientById(newPatient);
+      }else{
+        await patientApi.createPatient(newPatient);
+      }
+      
+      await patientApi.getAllPatient();
       store.setShowModal(false, {});
       alert("저장이 됐습니다.");
-    } else {
-      alert("저장이 되지 않았습니다.");
-      return;
+    }catch(e) {
+      alert("저장에 실패했습니다.")
     }
   };
+
+  const onClickDeleteHandler = async() => {
+    try{
+      await patientApi.deletePatientById(props._id!!);
+      store.setShowModal(false, {});
+      alert("삭제 됐습니다.");
+    }catch(e){
+      alert("삭제를 실패했습니다.")
+    }
+  }
 
   const handleCheckBoxChange = (option: string) => {
     const updatedOptions = painAreas.includes(option)
@@ -52,6 +72,40 @@ const ModalComponent: React.FC<Partial<IPatientModel>> = (props) => {
       : [...painAreas, option];
     setPainAreas(updatedOptions);
   };
+
+  const checkValidation = (): {validation: boolean, message: string} => {
+    const checkAgainItems = [];
+    if(!name){
+      checkAgainItems.push("name");
+    }
+
+    if(!underlyingConditions){
+      checkAgainItems.push("underlyingConditions");
+    }
+
+    if(!painAreas || painAreas.length === 0){
+      checkAgainItems.push("painAreas");
+    }
+
+    const returnValidation = {
+      validation: true,
+      message: ""
+    }
+    
+    if(checkAgainItems.length !== 0){
+      returnValidation.validation = false;
+
+      const checkMessage: {[key: string] : string} = {
+        "name" : "이름을 입력해주세요.",
+        "underlyingConditions" : "기저질환을 선택해주세요.",
+        "painAreas" : "통증부위는 1개 이상 체크해주세요."
+      }
+      
+      checkAgainItems.map((data) => returnValidation.message += checkMessage[data] + "\n");
+    }
+
+    return returnValidation;
+  }
 
   return (
     <ModalLayout>
@@ -62,7 +116,7 @@ const ModalComponent: React.FC<Partial<IPatientModel>> = (props) => {
       </ModalHeaderWrapper>
       <ModalBodyWrapper>
         <InputTextItem label="이름" value={name} onChange={setName} />
-        <InputNumberItem
+        <InputDateItem
           label="생년월일"
           value={birthdate}
           onChange={setBirthdate}
@@ -80,8 +134,8 @@ const ModalComponent: React.FC<Partial<IPatientModel>> = (props) => {
             onSelect={setUnderlyingConditions}
           />
         </ItemWrapper>
-        <ItemWrapper isBig={true}>
-          <LabelWrapper isBig={true}>통증 부위</LabelWrapper>
+        <ItemWrapper cumtomSize={"100px"}>
+          <LabelWrapper cumtomSize={"100px"}>통증 부위</LabelWrapper>
           <CheckItem values={painAreas} onChecked={handleCheckBoxChange} />
         </ItemWrapper>
         <ItemWrapper>
@@ -90,6 +144,9 @@ const ModalComponent: React.FC<Partial<IPatientModel>> = (props) => {
         </ItemWrapper>
       </ModalBodyWrapper>
       <ModalBottomWrapper>
+        {
+          props._id ? (<DeleteButton onClick={onClickDeleteHandler}>삭제</DeleteButton>) : null
+        }
         <SaveButton onClick={onClickSaveHandler}>저장</SaveButton>
       </ModalBottomWrapper>
     </ModalLayout>
@@ -111,15 +168,15 @@ const InputTextItem: React.FC<{
   </ItemWrapper>
 );
 
-const InputNumberItem: React.FC<{
+const InputDateItem: React.FC<{
   label: string;
-  value: number;
-  onChange: (value: number) => void;
+  value: string;
+  onChange: (value: string) => void;
 }> = ({ label, value, onChange }) => (
   <ItemWrapper>
     <LabelWrapper>{label}</LabelWrapper>
     <InputWrapper
-      type="number"
+      type="date"
       value={value}
       onChange={(e: any) => onChange(e.target.value)}
     />
@@ -236,6 +293,17 @@ const ModalBottomWrapper = styled.div`
   justify-content: end;
 `;
 
+const DeleteButton = styled.button`
+  margin-right: 20px;
+  width: 50px;
+  height: 30px;
+  border-radius: 10px;
+
+  &:hover {
+    background: pink;
+  }
+`;
+
 const SaveButton = styled.button`
   margin-right: 20px;
   width: 50px;
@@ -247,15 +315,15 @@ const SaveButton = styled.button`
   }
 `;
 
-const ItemWrapper = styled.div<{ isBig?: boolean }>`
+const ItemWrapper = styled.div<{ cumtomSize?: string }>`
   width: 100%;
-  height: ${(props) => (props.isBig ? "100px" : "20px")};
+  height: ${(props) => (props.cumtomSize ? props.cumtomSize : "20px")};
   display: flex;
 `;
 
-const LabelWrapper = styled.label<{ isBig?: boolean }>`
+const LabelWrapper = styled.label<{ cumtomSize?: string }>`
   width: 20%;
-  height: ${(props) => (props.isBig ? "100px" : "90%")};
+  height: ${(props) => (props.cumtomSize ? props.cumtomSize : "90%")};
   display: flex;
   align-items: center;
   justify-content: center;

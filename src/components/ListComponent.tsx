@@ -18,6 +18,11 @@ const ListComponent: React.FC<{}> = () => {
         <HeaderTwentyWrapper>생년월일</HeaderTwentyWrapper>
         <HeaderThirtyWrapper>기저 질환</HeaderThirtyWrapper>
         <HeaderThirtyWrapper>통증 부위</HeaderThirtyWrapper>
+        <CreateButtonWrapper>
+          <CreateButton onClick={() => store.setShowModal(true, {})}>
+            생성
+          </CreateButton>
+        </CreateButtonWrapper>
       </ListHeaderWrapper>
       <ListContentsWrapper>
         {store.patients?.map((patient) => (
@@ -30,10 +35,11 @@ const ListComponent: React.FC<{}> = () => {
 
 const ListWrapper = styled.div`
   width: 80%;
-  height: 100%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: auto;
 `;
 
 const ListHeaderWrapper = styled.div`
@@ -75,6 +81,24 @@ const ListContentsWrapper = styled.div`
   background: lightgray;
   border-radius: 10px;
   gap: 10px;
+  padding-top: 20px;
 `;
+
+const CreateButtonWrapper = styled.div`
+  width: 5%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const CreateButton = styled.button`
+  width: 100%;
+  height: 20%;
+
+  &:hover {
+    background: pink;
+  }
+`
 
 export default ListComponent;
