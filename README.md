@@ -1,46 +1,45 @@
-# Getting Started with Create React App
+## 실행 방법
+1. 터미널을 열어 원하는 디렉토리로 간다 -> git clone https://github.com/Bigone0617/patient-health-client.git
+2. npm install
+  - 주의할점 :  node version 16 이상.
+3. npm run start
+  - 주의할점 : 다른곳에서 port:3000 사용중이면 안된다.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## 사용 모듈
 
-In the project directory, you can run:
+**style**
+- react-icons
+- styled-components
 
-### `npm start`
+**HTTP Client**
+- axios
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**caching**
+- @tanstack/react-query
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+**state manage**
+- zustand
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**validation**
+- lodash
+- @types/lodash 
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 디스플레이 구조
+**Header**
+- 검색 컴퍼넌트
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**Body**
+- 환자 리스트
+- 환자 생성, 수정, 삭제 모달
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 문제풀이
+- axios를 이용해서 서버와 통신을 함.
+- react-query를 이용해서 서버에서 받아온 데이터들을 캐싱함.
+- axios를 통해 리스트 데이터를 받아 올 시, 성공하면 zustand를 통해서 글로벌 상태에 리스트를 주입.
+- 검색 시, "이름, 기저질환, 통증부위"를 기준으로 검색할 수 있도록 작업.
+- 브라우저에서 다른 탭을 갔다가 돌아 왔을 시, 리스트 refetch 되도록 작업.
+- 환자 리스트 및 환자의 정보는 zustand를 통해서 글로벌로 관리.
